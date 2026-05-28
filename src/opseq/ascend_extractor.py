@@ -37,10 +37,11 @@ def _default_compile_and_dump(model, inputs: dict, dump_dir: Path) -> Path:
     with torch.no_grad():
         compiled(**inputs)
 
-    dumps = sorted(dump_dir.glob("*.json"))
+    dumps = list(dump_dir.glob("*.json"))
     if not dumps:
         raise FileNotFoundError(f"未在 {dump_dir} 找到 GE dump 文件")
-    return dumps[-1]
+    # 取最近写入的 dump（torchair 可能产出多个阶段的图文件，字典序不可靠）
+    return max(dumps, key=lambda p: p.stat().st_mtime)
 
 
 def extract(

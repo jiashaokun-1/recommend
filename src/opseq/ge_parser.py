@@ -52,7 +52,7 @@ def parse_ge_graph(
         if node.get("type") in skip:
             continue
         attr = dict(node.get("attr", {}))
-        fusion_group = attr.get("fusion_group", next_id)
+        fusion_group = int(attr.get("fusion_group", next_id))
         ops.append(
             OpNode(
                 id=next_id,

@@ -25,7 +25,11 @@ class IRCache:
         self.root.mkdir(parents=True, exist_ok=True)
 
     def _key(self, model_id: str, shape_hash: str, backend: str) -> str:
-        return f"{model_id}__{shape_hash}__{backend}.json"
+        digest = hashlib.sha1(
+            "\x00".join([model_id, shape_hash, backend]).encode("utf-8")
+        ).hexdigest()[:16]
+        safe_model = "".join(c if c.isalnum() or c in "-." else "_" for c in model_id)
+        return f"{safe_model}__{digest}.json"
 
     def put(self, capture: ModelOpSeqCapture, *, shape_hash: str) -> Path:
         path = self.root / self._key(capture.model_id, shape_hash, capture.backend)
