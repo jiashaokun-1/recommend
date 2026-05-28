@@ -1,0 +1,25 @@
+{
+  "graph": [
+    {
+      "name": "main_graph",
+      "op": [
+        {
+          "name": "Data_0",
+          "type": "Data",
+          "input": [],
+          "input_desc": [],
+          "output_desc": [{"shape": {"dim": [1024, 256]}, "dtype": "DT_FLOAT16", "layout": "ND"}],
+          "attr": []
+        },
+        {
+          "name": "MatMulV2_0",
+          "type": "MatMulV2",
+          "input": ["Data_0:0"],
+          "input_desc": [{"shape": {"dim": [1024, 256]}, "dtype": "DT_FLOAT16", "layout": "ND"}],
+          "output_desc": [{"shape": {"dim": [1024, 128]}, "dtype": "DT_FLOAT16", "layout": "FRACTAL_NZ"}],
+          "attr": [{"key": "fusion_group", "value": {"i": 3}}, {"key": "transpose_x2", "value": {"b": false}}]
+        }
+      ]
+    }
+  ]
+}
