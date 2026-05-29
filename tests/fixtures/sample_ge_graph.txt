@@ -1,0 +1,424 @@
+name: "graph_2"
+op {
+  name: "arg0_1"
+  type: "Data"
+  attr {
+    key: "index"
+    value {
+      i: 0
+    }
+  }
+  attr {
+    key: "_output_name_value"
+    value {
+      list {
+        i: 0
+      }
+    }
+  }
+  attr {
+    key: "_output_name_key"
+    value {
+      list {
+        s: "y"
+      }
+    }
+  }
+  attr {
+    key: "_input_name_value"
+    value {
+      list {
+        i: 0
+      }
+    }
+  }
+  attr {
+    key: "_input_name_key"
+    value {
+      list {
+        s: "x"
+      }
+    }
+  }
+  input_desc {
+    name: "x"
+    dtype: DT_FLOAT
+    shape {
+      dim: 4
+      dim: 8
+    }
+    layout: "ND"
+    attr {
+      key: "format_for_int"
+      value {
+        i: 2
+      }
+    }
+    device_type: "NPU"
+  }
+  output_desc {
+    name: "y"
+    dtype: DT_FLOAT
+    shape {
+      dim: 4
+      dim: 8
+    }
+    layout: "ND"
+    attr {
+      key: "format_for_int"
+      value {
+        i: 2
+      }
+    }
+    attr {
+      key: "_meta"
+      value {
+        s: "Tensor(dtype=torch.float32, shape=torch.Size([4, 8])"
+      }
+    }
+    device_type: "NPU"
+  }
+}
+op {
+  name: "arg1_1"
+  type: "Data"
+  attr {
+    key: "index"
+    value {
+      i: 1
+    }
+  }
+  attr {
+    key: "_output_name_value"
+    value {
+      list {
+        i: 0
+      }
+    }
+  }
+  attr {
+    key: "_output_name_key"
+    value {
+      list {
+        s: "y"
+      }
+    }
+  }
+  attr {
+    key: "_input_name_value"
+    value {
+      list {
+        i: 0
+      }
+    }
+  }
+  attr {
+    key: "_input_name_key"
+    value {
+      list {
+        s: "x"
+      }
+    }
+  }
+  input_desc {
+    name: "x"
+    dtype: DT_FLOAT
+    shape {
+      dim: 8
+      dim: 16
+    }
+    layout: "ND"
+    attr {
+      key: "format_for_int"
+      value {
+        i: 2
+      }
+    }
+    device_type: "NPU"
+  }
+  output_desc {
+    name: "y"
+    dtype: DT_FLOAT
+    shape {
+      dim: 8
+      dim: 16
+    }
+    layout: "ND"
+    attr {
+      key: "format_for_int"
+      value {
+        i: 2
+      }
+    }
+    attr {
+      key: "_meta"
+      value {
+        s: "Tensor(dtype=torch.float32, shape=torch.Size([8, 16])"
+      }
+    }
+    device_type: "NPU"
+  }
+}
+op {
+  name: "MatMul"
+  type: "MatMul"
+  input: "arg0_1:0"
+  input: "arg1_1:0"
+  input: ""
+  attr {
+    key: "transpose_x2"
+    value {
+      b: false
+    }
+  }
+  attr {
+    key: "transpose_x1"
+    value {
+      b: false
+    }
+  }
+  attr {
+    key: "_output_name_value"
+    value {
+      list {
+        i: 0
+      }
+    }
+  }
+  attr {
+    key: "_output_name_key"
+    value {
+      list {
+        s: "y"
+      }
+    }
+  }
+  attr {
+    key: "_input_name_value"
+    value {
+      list {
+        i: 0
+        i: 1
+        i: 2
+      }
+    }
+  }
+  attr {
+    key: "_input_name_key"
+    value {
+      list {
+        s: "x1"
+        s: "x2"
+        s: "bias"
+      }
+    }
+  }
+  input_desc {
+    name: "x1"
+    dtype: DT_FLOAT
+    shape {
+      dim: 4
+      dim: 8
+    }
+    layout: "ND"
+    attr {
+      key: "_meta"
+      value {
+        s: "Tensor(dtype=torch.float32, shape=torch.Size([4, 8])"
+      }
+    }
+    device_type: "NPU"
+  }
+  input_desc {
+    name: "x2"
+    dtype: DT_FLOAT
+    shape {
+      dim: 8
+      dim: 16
+    }
+    layout: "ND"
+    attr {
+      key: "_meta"
+      value {
+        s: "Tensor(dtype=torch.float32, shape=torch.Size([8, 16])"
+      }
+    }
+    device_type: "NPU"
+  }
+  input_desc {
+    name: "bias"
+    attr {
+      key: "_is_unfed_optional"
+      value {
+        i: 1
+      }
+    }
+  }
+  output_desc {
+    name: "y"
+    dtype: DT_FLOAT
+    layout: "ND"
+    attr {
+      key: "_meta"
+      value {
+        s: "Tensor(dtype=torch.float32, shape=torch.Size([4, 16])"
+      }
+    }
+    attr {
+      key: "_fx_tensor_name"
+      value {
+        s: "matmul-aten.matmul.default.OUTPUT.0"
+      }
+    }
+  }
+}
+op {
+  name: "Relu"
+  type: "Relu"
+  input: "MatMul:0"
+  attr {
+    key: "_output_name_value"
+    value {
+      list {
+        i: 0
+      }
+    }
+  }
+  attr {
+    key: "_output_name_key"
+    value {
+      list {
+        s: "y"
+      }
+    }
+  }
+  attr {
+    key: "_input_name_value"
+    value {
+      list {
+        i: 0
+      }
+    }
+  }
+  attr {
+    key: "_input_name_key"
+    value {
+      list {
+        s: "x"
+      }
+    }
+  }
+  input_desc {
+    name: "x"
+    dtype: DT_FLOAT
+    layout: "ND"
+    attr {
+      key: "_meta"
+      value {
+        s: "Tensor(dtype=torch.float32, shape=torch.Size([4, 16])"
+      }
+    }
+    attr {
+      key: "_fx_tensor_name"
+      value {
+        s: "matmul-aten.matmul.default.OUTPUT.0"
+      }
+    }
+  }
+  output_desc {
+    name: "y"
+    dtype: DT_FLOAT
+    layout: "ND"
+    attr {
+      key: "_meta"
+      value {
+        s: "Tensor(dtype=torch.float32, shape=torch.Size([4, 16])"
+      }
+    }
+    attr {
+      key: "_fx_tensor_name"
+      value {
+        s: "relu-aten.relu.default.OUTPUT.0"
+      }
+    }
+  }
+}
+op {
+  name: "NetOutput"
+  type: "NetOutput"
+  input: "Relu:0"
+  attr {
+    key: "_output_name_value"
+    value {
+      list {
+      }
+    }
+  }
+  attr {
+    key: "_output_name_key"
+    value {
+      list {
+      }
+    }
+  }
+  attr {
+    key: "_input_name_value"
+    value {
+      list {
+        i: 0
+      }
+    }
+  }
+  attr {
+    key: "_input_name_key"
+    value {
+      list {
+        s: "input0"
+      }
+    }
+  }
+  input_desc {
+    name: "input0"
+    dtype: DT_FLOAT
+    shape {
+      dim: 4
+      dim: 16
+    }
+    layout: "ND"
+    attr {
+      key: "_meta"
+      value {
+        s: "Tensor(dtype=torch.float32, shape=torch.Size([4, 16])"
+      }
+    }
+    attr {
+      key: "_fx_tensor_name"
+      value {
+        s: "relu-aten.relu.default.OUTPUT.0"
+      }
+    }
+  }
+}
+attr {
+  key: "_output_dtypes"
+  value {
+    list {
+      i: 0
+    }
+  }
+}
+attr {
+  key: "_input_placements"
+  value {
+    list {
+      i: 1
+      i: 1
+    }
+  }
+}
+attr {
+  key: "_executor_type"
+  value {
+    i: 1
+  }
+}

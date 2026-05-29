@@ -32,6 +32,12 @@ _GE_TO_NORM: dict[str, str] = {
     "Relu": "FusedElementwise",
     "Sigmoid": "FusedElementwise",
     "Tanh": "FusedElementwise",
+    # 形状/布局变换（访存类，无算力但占带宽，roofline 需区分）
+    "Transpose": "Transpose",
+    "TransposeD": "Transpose",
+    "Reshape": "Reshape",
+    "TransData": "TransData",
+    "Cast": "Cast",
 }
 
 

@@ -29,7 +29,9 @@ def _default_compile_and_dump(model, inputs: dict, dump_dir: Path) -> Path:
     dump_dir.mkdir(parents=True, exist_ok=True)
 
     config = torchair.CompilerConfig()
-    config.debug.graph_dump.type = "json"
+    # torchair 仅支持 txt/pbtxt/py（无 json）；txt 是 GE GraphDef 的 protobuf-text，
+    # 结构与 ge_reader 约定一致。
+    config.debug.graph_dump.type = "txt"
     config.debug.graph_dump.path = str(dump_dir)
     npu_backend = torchair.get_npu_backend(compiler_config=config)
 
@@ -37,11 +39,13 @@ def _default_compile_and_dump(model, inputs: dict, dump_dir: Path) -> Path:
     with torch.no_grad():
         compiled(**inputs)
 
-    dumps = list(dump_dir.glob("*.json"))
+    dumps = list(dump_dir.glob("**/*.txt"))
     if not dumps:
         raise FileNotFoundError(f"未在 {dump_dir} 找到 GE dump 文件")
-    # 取最近写入的 dump（torchair 可能产出多个阶段的图文件，字典序不可靠）
-    return max(dumps, key=lambda p: p.stat().st_mtime)
+    # 优先 optimized（融合后）图——那才是 kernel 级算子序；torchair 同时会产出
+    # original（融合前 aten 级）图。同类多份时取最近写入的。
+    optimized = [p for p in dumps if "optimized" in p.name]
+    return max(optimized or dumps, key=lambda p: p.stat().st_mtime)
 
 
 def extract(

@@ -5,7 +5,7 @@ from opseq.cache import IRCache, shape_hash
 from opseq.ge_reader import read_ge_dump
 from opseq.ir import InputSpec, InputDesc
 
-FIX = Path(__file__).parent / "fixtures" / "sample_ge_graph.json"
+FIX = Path(__file__).parent / "fixtures" / "sample_ge_graph.txt"
 
 
 def _spec():
@@ -25,7 +25,8 @@ def test_extract_wires_reader_parser_cache(tmp_path):
     )
 
     assert cap.backend == "ascend"
-    assert [op.op_type for op in cap.ops] == ["MatMul"]
+    # 跳过 Data/NetOutput 结构节点后剩 MatMul + Relu(归一化为 FusedElementwise)
+    assert [op.op_type for op in cap.ops] == ["MatMul", "FusedElementwise"]
     got = cache.get(model_id="dlrm_v1", shape_hash=shape_hash(_spec()), backend="ascend")
     assert got == cap
 

@@ -16,5 +16,14 @@ def test_known_others():
     assert normalize_op_type("Add") == "FusedElementwise"
 
 
+def test_layout_and_reshape_ops():
+    # 真机 DLRM 融合图里 Linear 权重前置 Transpose、interaction Reshape 均出现过
+    assert normalize_op_type("Transpose") == "Transpose"
+    assert normalize_op_type("TransposeD") == "Transpose"
+    assert normalize_op_type("Reshape") == "Reshape"
+    assert normalize_op_type("TransData") == "TransData"
+    assert normalize_op_type("Cast") == "Cast"
+
+
 def test_unknown_falls_back():
     assert normalize_op_type("SomeBrandNewOp") == "Unknown"
