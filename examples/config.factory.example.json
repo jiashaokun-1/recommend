@@ -1,0 +1,30 @@
+{
+  "_comment": "用你自己的模型：model.factory / inputs.factory 写成 'module:callable'；factory 模式必须显式提供 input_spec。",
+  "model": {
+    "factory": "mypkg.models:build_model",
+    "params": { "hidden": 256 }
+  },
+  "inputs": {
+    "factory": "mypkg.models:build_inputs",
+    "params": { "batch_size": 32 }
+  },
+  "input_spec": {
+    "inputs": [
+      { "name": "dense",  "shape": [32, 13], "dtype": "fp32" },
+      { "name": "sparse", "shape": [26, 32], "dtype": "int64" }
+    ],
+    "symbol_bindings": {}
+  },
+  "meta": {
+    "model_id": "my_rec_v1",
+    "model_name": "MyRec",
+    "chip": "Ascend910",
+    "backend": "ascend"
+  },
+  "runtime": {
+    "device": "npu:0",
+    "dump_dir": "/tmp/opseq_dump",
+    "cache_dir": "/tmp/opseq_cache",
+    "output": "my_rec.ir.json"
+  }
+}

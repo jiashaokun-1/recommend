@@ -1,0 +1,19 @@
+{
+  "model": {
+    "builtin": "tiny_dlrm",
+    "params": { "n_tables": 3, "vocab": 1000, "emb_dim": 16, "dense_dim": 13 }
+  },
+  "inputs": { "batch_size": 4 },
+  "meta": {
+    "model_id": "tiny_dlrm",
+    "model_name": "TinyDLRM",
+    "chip": "Ascend910",
+    "backend": "ascend"
+  },
+  "runtime": {
+    "device": "npu",
+    "dump_dir": "/tmp/opseq_dump",
+    "cache_dir": "/tmp/opseq_cache",
+    "output": "tiny_dlrm.ir.json"
+  }
+}

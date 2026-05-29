@@ -52,6 +52,61 @@ pip install -e .
 
 ## 快速开始（Ascend）
 
+> Ascend 上先 `source /usr/local/Ascend/ascend-toolkit/set_env.sh`，可用
+> `ASCEND_RT_VISIBLE_DEVICES` 选卡。
+
+### 方式一：配置驱动启动（推荐）
+
+[`examples/run_extract.py`](examples/run_extract.py) 是一个**配置驱动**的启动器，开箱即用：
+
+```bash
+# 1) 用内置 tiny_dlrm 默认配置直接跑
+python examples/run_extract.py
+
+# 2) 指定配置文件
+python examples/run_extract.py --config examples/config.tiny_dlrm.json
+
+# 3) 命令行覆盖 config 字段
+python examples/run_extract.py --config examples/config.tiny_dlrm.json \
+    --device npu:0 --output /tmp/my.ir.json --no-cache
+```
+
+配置文件 [`examples/config.tiny_dlrm.json`](examples/config.tiny_dlrm.json)：
+
+```json
+{
+  "model": {
+    "builtin": "tiny_dlrm",
+    "params": { "n_tables": 3, "vocab": 1000, "emb_dim": 16, "dense_dim": 13 }
+  },
+  "inputs": { "batch_size": 4 },
+  "meta": { "model_id": "tiny_dlrm", "model_name": "TinyDLRM", "chip": "Ascend910", "backend": "ascend" },
+  "runtime": { "device": "npu", "dump_dir": "/tmp/opseq_dump", "cache_dir": "/tmp/opseq_cache", "output": "tiny_dlrm.ir.json" }
+}
+```
+
+预期输出（算子序为 Ascend 910 真机实测）：
+
+```text
+[opseq] model=tiny_dlrm device=npu backend=ascend ops=27
+[opseq] op_type dist: {'Transpose': 3, 'MatMul': 4, 'FusedElementwise': 12, 'Gather': 6, 'Concat': 1, 'Reshape': 1}
+ id op_type          in0              -> out0
+  0 Transpose        [64, 13]:fp32    -> [13, 64]:fp32[ND]
+  1 MatMul           [4, 13]:fp32     -> []:fp32[ND]
+  ...
+ 10 Gather           [3, 4]:int64     -> [4]:int64[ND]
+ 11 Gather           [1000, 16]:fp32  -> [4, 16]:fp32[ND]
+ 16 Concat           [4, 16]:fp32     -> [4, 64]:fp32[ND]
+  ...
+[opseq] IR -> tiny_dlrm.ir.json (~26 KB)
+```
+
+> 换成你自己的模型：把 `model.factory` / `inputs.factory` 写成 `"module:callable"`，并显式
+> 提供 `input_spec`，模板见 [`examples/config.factory.example.json`](examples/config.factory.example.json)。
+> 第二次以相同 `(model_id, shape, backend)` 启动会直接命中缓存、不重编译、不实跑。
+
+### 方式二：库 API 直接调用
+
 ```python
 import torch, torch_npu  # noqa
 from opseq.ascend_extractor import extract
@@ -130,6 +185,10 @@ src/opseq/
 ├── input_builder.py   # specialize 输入（dense + KeyedJaggedTensor）
 ├── ascend_extractor.py# 抽取编排 + torchair 编译/dump 默认实现
 └── profiler_attach.py # 可选：解析 msprof，回填 measured
+examples/
+├── run_extract.py             # 配置驱动启动器（CLI）
+├── config.tiny_dlrm.json      # 内置示例模型配置
+└── config.factory.example.json# 自定义模型工厂配置模板
 tests/                 # pytest（fixtures 为真机 GE txt dump）
 docs/
 ├── architecture.md    # 本架构说明（C4 + Mermaid）

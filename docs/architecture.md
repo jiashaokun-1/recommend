@@ -167,7 +167,7 @@ sequenceDiagram
         EX-->>Eng: 直接返回 IR
     else 未命中
         EX->>CD: compile_and_dump(model, inputs, dump_dir)
-        CD->>GE: torch.compile(backend=npu); 一次构图 dump
+        CD->>GE: torch.compile(backend=npu)，一次构图 dump
         GE-->>CD: dynamo_optimized_graph_*.txt
         CD-->>EX: dump 路径（优先 optimized）
         EX->>RD: read_ge_dump(path)
